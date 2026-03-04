@@ -2,12 +2,12 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>画面サイズ比較</title>
+    <title>Kelmap 画面サイズ比較 2026</title>
     <style>
         :root { --primary: #007bff; --bg: #f8fafc; --accent: #6366f1; --fav: #f59e0b; }
         body { font-family: 'Segoe UI', sans-serif; padding: 0; margin: 0; display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
         
-        /* サイドバー：Flexboxで縦並びを完全制御 */
+        /* サイドバー */
         .sidebar { width: 340px; padding: 20px; background: #fff; border-right: 1px solid #e2e8f0; z-index: 2000; flex-shrink: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
         .card { background: white; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px; flex-shrink: 0; }
         h3 { margin: 0; font-size: 14px; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -19,12 +19,11 @@
 
         label { display: block; font-size: 11px; color: #64748b; margin-bottom: 4px; font-weight: bold; }
         
-        /* チェックボックスの表示崩れ防止 (image_3a8611.png対策) */
         .check-group { display: flex; align-items: center; gap: 8px; margin: 10px 0; cursor: pointer; font-size: 13px; color: #475569; }
         input[type="checkbox"] { 
             width: 18px !important; height: 18px !important; 
             margin: 0 !important; flex-shrink: 0 !important; 
-            cursor: pointer; appearance: checkbox !important; /* 標準の外観を強制 */
+            cursor: pointer; appearance: checkbox !important;
         }
         
         input, select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; font-size: 13px; background: white; }
@@ -36,30 +35,27 @@
         .btn-util { background: #64748b; color: white; }
         .btn-100 { background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 4px; font-size: 10px; flex: none; }
 
-        /* リストセクション：ここが残りの高さを全て埋める */
         .list-section { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
         #historyList { flex: 1; overflow-y: auto; border: 1px solid #f1f5f9; border-radius: 8px; margin-bottom: 10px; background: #fafafa; }
         #historyList::-webkit-scrollbar { width: 6px; }
         #historyList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        /* キャンバスリセットボタン：高さを厳格に固定 (image_3676fc.png対策) */
         .btn-reset-canvas { 
             width: 100%; height: 40px !important; min-height: 40px !important; max-height: 40px !important;
             flex-shrink: 0 !important; background: #fee2e2; color: #ef4444; border-radius: 8px; font-weight: bold; 
         }
 
-        /* キャンバスとタブ */
         .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
         #activeBar { height: 48px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; display: flex !important; align-items: center !important; gap: 8px; padding: 0 15px; overflow-x: auto; flex-shrink: 0; }
         .active-tab { display: inline-flex !important; flex: 0 0 auto !important; align-items: center; padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); white-space: nowrap; }
 
         #canvas { flex-grow: 1; position: relative; background: #fff; overflow: hidden; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 40px 40px; }
         
-        .screen { position: absolute; border: 1px solid rgba(0,0,0,0.25); background-color: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: width 0.2s, height 0.2s; overflow: visible; }
+        .screen { position: absolute; border: 1px solid rgba(0,0,0,0.25); background-color: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: width 0.2s, height 0.2s; overflow: visible; cursor: grab; }
+        .screen:active { cursor: grabbing; }
         .screen.snapping { box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); border-color: var(--primary); }
         .screen-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; z-index: 5; position: relative; }
         
-        /* フォルダブル折れ線：最前面 z-index 100 */
         .fold-crease { position: absolute; pointer-events: none; z-index: 100; top: 0; left: 0; width: 100%; height: 100%; display: none; }
         .fold-v { border-left: 1px dashed rgba(0,0,0,0.3) !important; left: 50%; height: 100%; width: 0; }
         .fold-h { border-top: 1px dashed rgba(0,0,0,0.3) !important; top: 50%; width: 100%; height: 0; }
@@ -154,42 +150,55 @@
     let screenCount = 0, topZIndex = 100, editingIndex = -1;
     let baseScale = parseFloat(localStorage.getItem('mmScale')) || 3.78, zoomLevel = parseFloat(localStorage.getItem('zoomLevel')) || 1.0;
     const snapThreshold = 14;
-   // デバイスリストの初期化（外部JSON対応版）
     let savedDevices = [];
-
-    async function initApp() {
-        // 1. まずローカルストレージを確認
-        const localData = localStorage.getItem('myDevices');
-        
-        if (localData && JSON.parse(localData).length > 0) {
-            // すでにユーザーの保存データがある場合
-            savedDevices = JSON.parse(localData);
-        } else {
-            // 2. データが空なら外部JSONを読み込みに行く
-            try {
-                const response = await fetch('devices.json');
-                if (!response.ok) throw new Error('Network response was not ok');
-                savedDevices = await response.json();
-                
-                // 初回のみローカルに保存
-                localStorage.setItem('myDevices', JSON.stringify(savedDevices));
-                console.log("External database loaded successfully.");
-            } catch (error) {
-                console.error("Failed to load external database, using minimal fallback.", error);
-                // 通信エラー時のバックアップ用（最小限）
-                savedDevices = [{ "name": "iPhone 17 Pro Max", "size": 6.9, "w": 1320, "h": 2868 }];
-            }
-        }
-        
-        // 3. リストを表示（既存の関数を呼び出し）
-        updateDeviceList();
-    }
-
-    // アプリ起動
-    initApp();
     let activeScreens = [];
 
-    // --- コア機能 ---
+    // アプリの初期化
+    async function initApp() {
+        console.log("Initializing App...");
+        const localData = localStorage.getItem('myDevices');
+        
+        // 1. データの読み込み
+        if (localData && JSON.parse(localData).length > 0) {
+            savedDevices = JSON.parse(localData);
+        } else {
+            try {
+                const response = await fetch('devices.json');
+                if (!response.ok) throw new Error('Fetch Error');
+                savedDevices = await response.json();
+                localStorage.setItem('myDevices', JSON.stringify(savedDevices));
+            } catch (error) {
+                console.warn("External JSON not found, using fallback.");
+                savedDevices = [{ "name": "iPhone 17 Pro Max", "maker":"Apple", "size": 6.9, "w": 1320, "h": 2868 }];
+            }
+        }
+
+        // 2. UI初期設定
+        document.getElementById('zoomSlider').value = zoomLevel * 100;
+        document.getElementById('zoomVal').innerText = Math.round(zoomLevel * 100);
+        document.getElementById('scaleSlider').value = baseScale;
+        document.getElementById('scaleVal').innerText = baseScale.toFixed(2);
+        
+        // スライダーのイベント設定
+        document.getElementById('zoomSlider').oninput = function() {
+            zoomLevel = parseFloat(this.value) / 100;
+            document.getElementById('zoomVal').innerText = Math.round(zoomLevel * 100);
+            updateAll();
+        };
+        
+        document.getElementById('scaleSlider').oninput = function() {
+            baseScale = parseFloat(this.value);
+            document.getElementById('scaleVal').innerText = baseScale.toFixed(2);
+            updateAll();
+            updateRefCard();
+        };
+
+        // 3. リスト表示
+        updateDynamicOptions();
+        renderHistory();
+    }
+
+    // コア描画機能
     function calculatePPI(w, h, size) { if (!w || !h || !size || w < 50) return null; return Math.round(Math.sqrt(w*w + h*h) / size); }
 
     function renderHistory() {
@@ -238,7 +247,6 @@
         div.querySelector('.screen-info').innerHTML = `<b>${data.name}</b>${stateText}<br>${s.size}" ${ppi ? `<small>(${ppi} ppi)</small>` : ''}<br><small style="color:#666">${Math.round(dims.w)}×${Math.round(dims.h)}mm</small>`;
     }
 
-    // --- 管理 ＆ UI制御 ---
     function makeDraggable(el) {
         let mX, mY, vL, vT;
         el.onmousedown = (e) => {
@@ -259,29 +267,32 @@
             document.onmouseup = () => { el.classList.remove('snapping'); document.onmousemove = null; };
         };
     }
+
     function toggleCard(id) { document.getElementById(id).classList.toggle('collapsed'); }
     function toggleFoldForm() { const isFold = document.getElementById('isFoldableCheck').checked; document.getElementById('foldInput').style.display = isFold ? 'block' : 'none'; document.getElementById('swapBtn').style.display = isFold ? 'block' : 'none'; document.getElementById('mainLabel').innerText = isFold ? 'メイン画面 (inch)' : '画面サイズ (inch)'; }
     function swapFoldValues() { ['size', 'ratioW', 'ratioH'].forEach(f => { const m = document.getElementById(f), s = document.getElementById(f + 'Sub'); const t = m.value; m.value = s.value; s.value = t; }); }
     function deleteHistory(e, i) { e.stopPropagation(); const name = savedDevices[i].name; if(confirm(`'${name}' をリストから削除しますか？`)) { savedDevices.splice(i, 1); localStorage.setItem('myDevices', JSON.stringify(savedDevices)); updateDynamicOptions(); renderHistory(); } }
     function resetFilters() { document.getElementById('filterSearch').value = ''; document.getElementById('filterMaker').value = 'all'; document.getElementById('filterYear').value = 'all'; document.getElementById('filterCat').value = 'all'; renderHistory(); }
     function resetZoom() { zoomLevel = 1.0; document.getElementById('zoomSlider').value = 100; document.getElementById('zoomVal').innerText = 100; updateAll(); }
-    document.getElementById('zoomSlider').oninput = function() { zoomLevel = parseFloat(this.value) / 100; document.getElementById('zoomVal').innerText = Math.round(zoomLevel * 100); updateAll(); };
     function toggleFav(e, idx) { e.stopPropagation(); savedDevices[idx].isFavorite = !savedDevices[idx].isFavorite; localStorage.setItem('myDevices', JSON.stringify(savedDevices)); renderHistory(); }
     function updateAll() { activeScreens.forEach(s => applyScreenSize(s.div, s.data)); }
     function bringToFront(el) { topZIndex++; el.style.zIndex = topZIndex; updateActiveBar(); }
     function updateActiveBar() { const bar = document.getElementById('activeBar'); if(!bar) return; bar.innerHTML = ''; activeScreens.forEach(s => { const tab = document.createElement('div'); tab.className = 'active-tab'; tab.style.backgroundColor = s.div.style.backgroundColor; tab.innerText = s.data.name; tab.onclick = () => bringToFront(s.div); bar.appendChild(tab); }); }
+    
     function updateDynamicOptions() {
         const makers = [...new Set(savedDevices.map(d => d.maker).filter(Boolean))].sort(), years = [...new Set(savedDevices.map(d => d.year).filter(Boolean))].sort((a,b) => b - a);
         const l = (id, items) => { const el = document.getElementById(id); if(el) el.innerHTML = items.map(i => `<option value="${i}">`).join(''); };
         const s = (id, label, items) => { const el = document.getElementById(id); if(!el) return; const cur = el.value; el.innerHTML = `<option value="all">${label}:全て</option>` + items.map(i => `<option value="${i}">${i}</option>`).join(''); el.value = items.includes(cur) ? cur : 'all'; };
         l('makerOptions', makers); l('yearOptions', years); s('filterMaker', 'メーカー', makers); s('filterYear', '年式', years);
     }
+
     function saveToHistory() {
         const name = document.getElementById('model').value; if(!name) return alert("名前を入力してください");
         const device = { name, maker: document.getElementById('maker').value, year: document.getElementById('year').value, category: document.getElementById('category').value, isFavorite: editingIndex >= 0 ? savedDevices[editingIndex].isFavorite : false, isFoldable: document.getElementById('isFoldableCheck').checked, isRotated: false, currentMode: document.getElementById('isFoldableCheck').checked ? 'unfolded' : null };
         if (device.isFoldable) { device.modes = { unfolded: { size: parseFloat(document.getElementById('size').value), w: parseFloat(document.getElementById('ratioW').value), h: parseFloat(document.getElementById('ratioH').value) }, folded: { size: parseFloat(document.getElementById('sizeSub').value), w: parseFloat(document.getElementById('ratioWSub').value), h: parseFloat(document.getElementById('ratioHSub').value) } }; } else { device.size = parseFloat(document.getElementById('size').value); device.w = parseFloat(document.getElementById('ratioW').value); device.h = parseFloat(document.getElementById('ratioH').value); }
         if (editingIndex === -1) savedDevices.push(device); else savedDevices[editingIndex] = device; localStorage.setItem('myDevices', JSON.stringify(savedDevices)); updateDynamicOptions(); cancelEdit(); renderHistory();
     }
+
     function editHistory(e, i) { e.stopPropagation(); editingIndex = i; const d = savedDevices[i]; document.getElementById('model').value = d.name; document.getElementById('maker').value = d.maker || ''; document.getElementById('year').value = d.year || ''; document.getElementById('category').value = d.category || 'smartphone'; document.getElementById('isFoldableCheck').checked = d.isFoldable; toggleFoldForm();
         if (d.isFoldable) { document.getElementById('size').value = d.modes.unfolded.size; document.getElementById('ratioW').value = d.modes.unfolded.w; document.getElementById('ratioH').value = d.modes.unfolded.h; document.getElementById('sizeSub').value = d.modes.folded.size; document.getElementById('ratioWSub').value = d.modes.folded.w; document.getElementById('ratioHSub').value = d.modes.folded.h; } else { document.getElementById('size').value = d.size; document.getElementById('ratioW').value = d.w; document.getElementById('ratioH').value = d.h; }
         document.getElementById('formTitleText').innerText = "データ編集"; document.getElementById('saveBtn').innerText = "更新"; document.getElementById('cancelBtn').style.display = "block"; document.getElementById('cardRegister').classList.remove('collapsed');
@@ -295,14 +306,8 @@
     function updateRefCard() { const ref = document.getElementById('calibRef'); if(ref) { ref.style.width = (85.6 * baseScale) + 'px'; ref.style.height = (53.98 * baseScale) + 'px'; } }
     function lockCalibration() { localStorage.setItem('mmScale', baseScale); toggleCalibMode(); }
 
-    window.onload = () => { updateDynamicOptions(); renderHistory(); document.getElementById('zoomSlider').value = zoomLevel * 100; document.getElementById('zoomVal').innerText = Math.round(zoomLevel * 100); document.getElementById('scaleSlider').value = baseScale; document.getElementById('scaleVal').innerText = baseScale.toFixed(2); };
+    // 起動
+    initApp();
 </script>
 </body>
-
 </html>
-
-
-
-
-
-
