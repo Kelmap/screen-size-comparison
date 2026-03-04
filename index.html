@@ -154,39 +154,56 @@
     let screenCount = 0, topZIndex = 100, editingIndex = -1;
     let baseScale = parseFloat(localStorage.getItem('mmScale')) || 3.78, zoomLevel = parseFloat(localStorage.getItem('zoomLevel')) || 1.0;
     const snapThreshold = 14;
-   // --- 2026年最新フラッグシップ・デフォルトデータ (タブレットは横向き設定) ---
+   // --- 2026年最新フラッグシップ・正確版データ (タブレットは横向き) ---
     const defaultDevices = [
         {
-            "name": "iPhone 17 Pro Max",
-            "maker": "Apple", "year": "2025", "category": "smartphone", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 6.9, "w": 1320, "h": 2868 // 縦
+            "name": "iPad Pro 13 (M5)",
+            "maker": "Apple", "year": "2026", "category": "tablet", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 13.0, "w": 2752, "h": 2064
+        },
+        {
+            "name": "iPad Pro 11 (M5)",
+            "maker": "Apple", "year": "2026", "category": "tablet", "isFavorite": false,
+            "isFoldable": false, "isRotated": false, "size": 11.0, "w": 2420, "h": 1668
+        },
+        {
+            "name": "nubia Pad Pro",
+            "maker": "Nubia", "year": "2025", "category": "tablet", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 10.9, "w": 2880, "h": 1800
+        },
+        {
+            "name": "REDMAGIC Astra",
+            "maker": "Nubia", "year": "2026", "category": "tablet", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 9.06, "w": 2400, "h": 1504
+        },
+        {
+            "name": "Legion Tab (8.8\", 3)",
+            "maker": "Lenovo", "year": "2026", "category": "tablet", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 8.8, "w": 2560, "h": 1600
+        },
+        {
+            "name": "iPad mini (第7世代)",
+            "maker": "Apple", "year": "2024", "category": "tablet", "isFavorite": false,
+            "isFoldable": false, "isRotated": false, "size": 8.3, "w": 2266, "h": 1488
+        },
+        {
+            "name": "Xiaomi Pad 8 Pro",
+            "maker": "Xiaomi", "year": "2026", "category": "tablet", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 11.2, "w": 3200, "h": 2136
         },
         {
             "name": "Pixel 10 Pro Fold",
             "maker": "Google", "year": "2025", "category": "smartphone", "isFavorite": true,
             "isFoldable": true, "isRotated": false, "currentMode": "unfolded",
             "modes": {
-                // 展開時は横長（2152x2076）をベースに設定
-                "unfolded": { "size": 8.0, "w": 2152, "h": 2076 }, 
+                "unfolded": { "size": 8.0, "w": 2152, "h": 2076 },
                 "folded": { "size": 6.4, "w": 1080, "h": 2364 }
             }
         },
         {
-            "name": "Galaxy S26 Ultra",
-            "maker": "Samsung", "year": "2026", "category": "smartphone", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 6.9, "w": 1440, "h": 3120 // 縦
-        },
-        {
-            "name": "Xiaomi Pad 8 Pro",
-            "maker": "Xiaomi", "year": "2026", "category": "tablet", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, 
-            "size": 11.2, "w": 3200, "h": 2136 // 横長に設定
-        },
-        {
-            "name": "iPad Pro 13 (M5)",
-            "maker": "Apple", "year": "2024", "category": "tablet", "isFavorite": false,
-            "isFoldable": false, "isRotated": false, 
-            "size": 13.0, "w": 2752, "h": 2064 // 横長に設定
+            "name": "iPhone 17 Pro Max",
+            "maker": "Apple", "year": "2025", "category": "smartphone", "isFavorite": false,
+            "isFoldable": false, "isRotated": false, "size": 6.9, "w": 1320, "h": 2868
         }
     ];
 
@@ -309,6 +326,7 @@
 </body>
 
 </html>
+
 
 
 
