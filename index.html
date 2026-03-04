@@ -154,65 +154,39 @@
     let screenCount = 0, topZIndex = 100, editingIndex = -1;
     let baseScale = parseFloat(localStorage.getItem('mmScale')) || 3.78, zoomLevel = parseFloat(localStorage.getItem('zoomLevel')) || 1.0;
     const snapThreshold = 14;
-   // --- 2026年最新フラッグシップ・正確版データ (タブレットは横向き) ---
-    const defaultDevices = [
-        {
-            "name": "iPad Pro 13 (M5)",
-            "maker": "Apple", "year": "2026", "category": "tablet", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 13.0, "w": 2752, "h": 2064
-        },
-        {
-            "name": "iPad Pro 11 (M5)",
-            "maker": "Apple", "year": "2026", "category": "tablet", "isFavorite": false,
-            "isFoldable": false, "isRotated": false, "size": 11.0, "w": 2420, "h": 1668
-        },
-        {
-            "name": "nubia Pad Pro",
-            "maker": "Nubia", "year": "2025", "category": "tablet", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 10.9, "w": 2880, "h": 1800
-        },
-        {
-            "name": "REDMAGIC Astra",
-            "maker": "Nubia", "year": "2026", "category": "tablet", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 9.06, "w": 2400, "h": 1504
-        },
-        {
-            "name": "Legion Tab (8.8\", 3)",
-            "maker": "Lenovo", "year": "2026", "category": "tablet", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 8.8, "w": 2560, "h": 1600
-        },
-        {
-            "name": "iPad mini (第7世代)",
-            "maker": "Apple", "year": "2024", "category": "tablet", "isFavorite": false,
-            "isFoldable": false, "isRotated": false, "size": 8.3, "w": 2266, "h": 1488
-        },
-        {
-            "name": "Xiaomi Pad 8 Pro",
-            "maker": "Xiaomi", "year": "2026", "category": "tablet", "isFavorite": true,
-            "isFoldable": false, "isRotated": false, "size": 11.2, "w": 3200, "h": 2136
-        },
-        {
-            "name": "Pixel 10 Pro Fold",
-            "maker": "Google", "year": "2025", "category": "smartphone", "isFavorite": true,
-            "isFoldable": true, "isRotated": false, "currentMode": "unfolded",
-            "modes": {
-                "unfolded": { "size": 8.0, "w": 2152, "h": 2076 },
-                "folded": { "size": 6.4, "w": 1080, "h": 2364 }
-            }
-        },
-        {
-            "name": "iPhone 17 Pro Max",
-            "maker": "Apple", "year": "2025", "category": "smartphone", "isFavorite": false,
-            "isFoldable": false, "isRotated": false, "size": 6.9, "w": 1320, "h": 2868
-        }
-    ];
+   // デバイスリストの初期化（外部JSON対応版）
+    let savedDevices = [];
 
-    // 保存データがない場合にのみ初期データを投入
-    let savedDevices = JSON.parse(localStorage.getItem('myDevices')) || [];
-    if (savedDevices.length === 0) {
-        savedDevices = defaultDevices;
-        localStorage.setItem('myDevices', JSON.stringify(savedDevices));
+    async function initApp() {
+        // 1. まずローカルストレージを確認
+        const localData = localStorage.getItem('myDevices');
+        
+        if (localData && JSON.parse(localData).length > 0) {
+            // すでにユーザーの保存データがある場合
+            savedDevices = JSON.parse(localData);
+        } else {
+            // 2. データが空なら外部JSONを読み込みに行く
+            try {
+                const response = await fetch('devices.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                savedDevices = await response.json();
+                
+                // 初回のみローカルに保存
+                localStorage.setItem('myDevices', JSON.stringify(savedDevices));
+                console.log("External database loaded successfully.");
+            } catch (error) {
+                console.error("Failed to load external database, using minimal fallback.", error);
+                // 通信エラー時のバックアップ用（最小限）
+                savedDevices = [{ "name": "iPhone 17 Pro Max", "size": 6.9, "w": 1320, "h": 2868 }];
+            }
+        }
+        
+        // 3. リストを表示（既存の関数を呼び出し）
+        renderList(); 
     }
+
+    // アプリ起動
+    initApp();
     let activeScreens = [];
 
     // --- コア機能 ---
@@ -326,6 +300,7 @@
 </body>
 
 </html>
+
 
 
 
