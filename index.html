@@ -154,7 +154,45 @@
     let screenCount = 0, topZIndex = 100, editingIndex = -1;
     let baseScale = parseFloat(localStorage.getItem('mmScale')) || 3.78, zoomLevel = parseFloat(localStorage.getItem('zoomLevel')) || 1.0;
     const snapThreshold = 14;
+    // --- 2026年最新フラッグシップ・デフォルトデータ ---
+    const defaultDevices = [
+        {
+            "name": "iPhone 17 Pro Max",
+            "maker": "Apple", "year": "2025", "category": "smartphone", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 6.9, "w": 1320, "h": 2868
+        },
+        {
+            "name": "Pixel 10 Pro Fold",
+            "maker": "Google", "year": "2025", "category": "smartphone", "isFavorite": true,
+            "isFoldable": true, "isRotated": false, "currentMode": "unfolded",
+            "modes": {
+                "unfolded": { "size": 8.0, "w": 2076, "h": 2152 },
+                "folded": { "size": 6.4, "w": 1080, "h": 2364 }
+            }
+        },
+        {
+            "name": "Galaxy S26 Ultra",
+            "maker": "Samsung", "year": "2026", "category": "smartphone", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 6.9, "w": 1440, "h": 3120
+        },
+        {
+            "name": "Xiaomi Pad 8 Pro",
+            "maker": "Xiaomi", "year": "2026", "category": "tablet", "isFavorite": true,
+            "isFoldable": false, "isRotated": false, "size": 11.2, "w": 2136, "h": 3200
+        },
+        {
+            "name": "iPad Pro 13 (M4)",
+            "maker": "Apple", "year": "2024", "category": "tablet", "isFavorite": false,
+            "isFoldable": false, "isRotated": false, "size": 13.0, "w": 2064, "h": 2752
+        }
+    ];
+
+    // 保存データがない場合にのみ初期データを投入するロジック
     let savedDevices = JSON.parse(localStorage.getItem('myDevices')) || [];
+    if (savedDevices.length === 0) {
+        savedDevices = defaultDevices;
+        localStorage.setItem('myDevices', JSON.stringify(savedDevices));
+    }
     let activeScreens = [];
 
     // --- コア機能 ---
@@ -268,3 +306,4 @@
 </body>
 
 </html>
+
