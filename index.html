@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>画面サイズ比較 - プロフェッショナル統合版</title>
+    <title>画面サイズ比較</title>
     <style>
         :root { --primary: #007bff; --bg: #f8fafc; --accent: #6366f1; --fav: #f59e0b; }
         body { font-family: 'Segoe UI', sans-serif; padding: 0; margin: 0; display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
@@ -266,4 +266,5 @@
     window.onload = () => { updateDynamicOptions(); renderHistory(); document.getElementById('zoomSlider').value = zoomLevel * 100; document.getElementById('zoomVal').innerText = Math.round(zoomLevel * 100); document.getElementById('scaleSlider').value = baseScale; document.getElementById('scaleVal').innerText = baseScale.toFixed(2); };
 </script>
 </body>
+
 </html>
