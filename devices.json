@@ -116,5 +116,49 @@
     "size": 6.3,
     "w": 1280,
     "h": 2856
+  },
+  {
+    "name": "Galaxy Z Fold 7",
+    "maker": "SAMSUNG",
+    "year": "2025",
+    "category": "smartphone",
+    "isFavorite": false,
+    "isFoldable": true,
+    "isRotated": false,
+    "currentMode": "unfolded",
+    "modes": {
+      "unfolded": {
+        "size": 8,
+        "w": 1968,
+        "h": 2184
+      },
+      "folded": {
+        "size": 6.5,
+        "w": 1080,
+        "h": 2520
+      }
+    }
+  },
+  {
+    "name": "Galaxy Z TriFold",
+    "maker": "SAMSUNG",
+    "year": "2026",
+    "category": "smartphone",
+    "isFavorite": false,
+    "isFoldable": true,
+    "isRotated": false,
+    "currentMode": "unfolded",
+    "modes": {
+      "unfolded": {
+        "size": 10,
+        "w": 2180,
+        "h": 1584
+      },
+      "folded": {
+        "size": 6.5,
+        "w": 1080,
+        "h": 2520
+      }
+    }
   }
 ]
